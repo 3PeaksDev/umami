@@ -3,10 +3,14 @@ import { getRequestDateRange, parseRequest } from '@/lib/request';
 import { json, unauthorized } from '@/lib/response';
 import { withDateRange } from '@/lib/schema';
 import {
+  getFleetChannelReferrers,
   getFleetChannels,
   getFleetConversions,
+  getFleetDevices,
+  getFleetGeo,
   getFleetSummary,
   getFleetTopSites,
+  getFleetTrend,
 } from '@/queries/sql';
 
 export async function GET(request: Request) {
@@ -26,15 +30,43 @@ export async function GET(request: Request) {
     return unauthorized();
   }
 
-  const { startDate, endDate } = getRequestDateRange(query);
+  const { startDate, endDate, unit, timezone } = getRequestDateRange(query);
   const range = { startDate, endDate };
 
-  const [summary, channels, conversions, topSites] = await Promise.all([
+  const [
+    summary,
+    channels,
+    channelReferrers,
+    conversions,
+    topSites,
+    trend,
+    visitsByCountry,
+    conversionsByCountry,
+    browser,
+    os,
+    device,
+  ] = await Promise.all([
     getFleetSummary(range),
     getFleetChannels(range),
+    getFleetChannelReferrers(range),
     getFleetConversions(range),
     getFleetTopSites({ ...range, limit: query.limit }),
+    getFleetTrend({ ...range, unit, timezone }),
+    getFleetGeo({ ...range, metric: 'visits' }),
+    getFleetGeo({ ...range, metric: 'conversions' }),
+    getFleetDevices({ ...range, type: 'browser' }),
+    getFleetDevices({ ...range, type: 'os' }),
+    getFleetDevices({ ...range, type: 'device' }),
   ]);
 
-  return json({ summary, channels, conversions, topSites });
+  return json({
+    summary,
+    channels,
+    channelReferrers,
+    conversions,
+    topSites,
+    trend,
+    geo: { visitsByCountry, conversionsByCountry },
+    devices: { browser, os, device },
+  });
 }
