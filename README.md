@@ -17,6 +17,47 @@
 
 ---
 
+## 🏢 How we use this fork (3Peaks local SEO)
+
+> This section documents how this fork is operated inside our business. Everything below is fork-specific and not part of upstream Umami.
+
+This is the **first-party analytics backend for our local-SEO website fleet** (~3,053 service-area sites). We run it self-hosted so that, from a visitor's or search engine's perspective, every site only ever talks to its own domain — there is no shared third-party analytics host to correlate the network.
+
+### Deployment
+
+- **Hosting:** this fork is deployed on **Vercel** (project `umami`), backed by a **dedicated Neon Postgres project** (`local-seo-analytics`) that is separate from the main application database.
+- **Origin URL** (`UMAMI_ORIGIN`, server-side only, never exposed to browsers): `https://local-seo-analytics.vercel.app`.
+- Deploys happen automatically on push to this fork.
+
+### How tracking reaches the sites
+
+The tracker is **never baked into the static sites**. Instead, a Cloudflare Worker that already fronts every domain injects it at the edge and proxies it first-party:
+
+1. Each site's Umami `websiteId` (a UUID) is stored canonically in the main app DB as `Website.umamiWebsiteId`.
+2. A deploy-time map (`domain → websiteId`) is bundled into the Cloudflare Worker.
+3. For HTML responses on mapped domains, the Worker injects:
+   `<script defer src="/_a/script.js" data-website-id="<uuid>" data-host-url="<origin>/_a">`.
+4. The Worker reverse-proxies `/_a/*` to this Umami instance (`/_a/script.js → /script.js`, `/_a/api/send → /api/send`), forwarding the real client IP so geo/device data stays accurate.
+
+Enabling/disabling analytics for a domain is a DB update + fast Worker redeploy — it never triggers a site rebuild.
+
+### What we track
+
+- **Pageviews** (automatic).
+- **Custom conversion events**, the metrics that matter for local SEO:
+  - `phone_call` — any click on a `tel:` link, with `{ page, number }`.
+  - `form_submit` — a successful contact-form submission, with `{ page }`.
+
+### Fork-specific additions
+
+- **Fleet page (`/fleet`):** a custom, admin-gated page that aggregates **across all sites at once** (something native Umami does not offer — every native dashboard is per-site). It surfaces fleet-wide traffic and channel mix, plus `phone_call`/`form_submit` conversions broken down by acquisition source (organic search, social, direct, referral, paid), attributed to each visit's first touch. AI engines (ChatGPT, Perplexity, etc.) are treated as organic search, with the raw referrer domain available as a drill-down.
+
+### Keeping in sync with upstream
+
+We deliberately implement fork additions as **net-new files** wherever possible to minimize merge conflicts when pulling upstream Umami releases.
+
+---
+
 ## 🚀 Getting Started
 
 A detailed getting started guide can be found at [umami.is/docs](https://umami.is/docs/).
