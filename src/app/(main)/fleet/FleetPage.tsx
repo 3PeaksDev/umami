@@ -32,6 +32,7 @@ import { WebsiteDateFilter } from '@/components/input/WebsiteDateFilter';
 import { MetricCard } from '@/components/metrics/MetricCard';
 import { MetricsBar } from '@/components/metrics/MetricsBar';
 import { PageviewsChart } from '@/components/metrics/PageviewsChart';
+import { UsaMap } from '@/components/metrics/UsaMap';
 import { WorldMap } from '@/components/metrics/WorldMap';
 import { ROLES } from '@/lib/constants';
 import { formatNumber } from '@/lib/format';
@@ -129,11 +130,11 @@ export function FleetPage() {
         </Panel>
 
         <Grid columns={{ base: '1fr', lg: '1fr 1fr' }} gap="6">
-          <Panel title={t(labels.visitors)}>
-            <WorldMap data={data?.geo.visitsByCountry ?? []} />
+          <Panel title="Visitors by state">
+            <UsaMap data={data?.geo.visitsByRegion ?? []} />
           </Panel>
-          <Panel title={t(labels.conversion)}>
-            <WorldMap data={data?.geo.conversionsByCountry ?? []} />
+          <Panel title="Conversions by state">
+            <UsaMap data={data?.geo.conversionsByRegion ?? []} />
           </Panel>
         </Grid>
 
@@ -195,6 +196,15 @@ export function FleetPage() {
         <Panel title={t(labels.devices)}>
           <DevicesTabs devices={data?.devices} isMobile={isMobile} t={t} labels={labels} />
         </Panel>
+
+        <Grid columns={{ base: '1fr', lg: '1fr 1fr' }} gap="6">
+          <Panel title={`${t(labels.visitors)} (worldwide)`}>
+            <WorldMap data={data?.geo.visitsByCountry ?? []} />
+          </Panel>
+          <Panel title={`${t(labels.conversion)} (worldwide)`}>
+            <WorldMap data={data?.geo.conversionsByCountry ?? []} />
+          </Panel>
+        </Grid>
       </Column>
     </PageBody>
   );
