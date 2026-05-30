@@ -16,6 +16,7 @@ export * from './fleet/getFleetChannels';
 export * from './fleet/getFleetConversions';
 export * from './fleet/getFleetDevices';
 export * from './fleet/getFleetGeo';
+export * from './fleet/getFleetRegion';
 export * from './fleet/getFleetSummary';
 export * from './fleet/getFleetTopSites';
 export * from './fleet/getFleetTrend';

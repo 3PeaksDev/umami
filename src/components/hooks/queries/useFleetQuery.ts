@@ -37,6 +37,8 @@ export interface FleetData {
   geo: {
     visitsByCountry: FleetGeoDatum[];
     conversionsByCountry: FleetGeoDatum[];
+    visitsByRegion: FleetGeoDatum[];
+    conversionsByRegion: FleetGeoDatum[];
   };
   devices: {
     browser: FleetGeoDatum[];
