@@ -1,9 +1,9 @@
 import { Column, Grid, Row, Text } from '@umami/react-zen';
-import Link from '@/components/common/Link';
 import { WebsiteNav } from '@/app/(main)/websites/[websiteId]/WebsiteNav';
 import { IconLabel } from '@/components/common/IconLabel';
+import Link from '@/components/common/Link';
 import { useMessages, useNavigation } from '@/components/hooks';
-import { Globe, Grid2x2, LayoutDashboard, LinkIcon } from '@/components/icons';
+import { Globe, Grid2x2, Layers, LayoutDashboard, LinkIcon } from '@/components/icons';
 import { MobileMenuButton } from '@/components/input/MobileMenuButton';
 import { UserButton } from '@/components/input/UserButton';
 import { Logo } from '@/components/svg';
@@ -12,12 +12,22 @@ import { SettingsNav } from './settings/SettingsNav';
 
 export function MobileNav() {
   const { t, labels } = useMessages();
-  const { pathname, websiteId, renderUrl } = useNavigation();
+  const { pathname, websiteId, renderUrl, teamId } = useNavigation();
   const isAdmin = pathname.includes('/admin');
   const isSettings = pathname.includes('/settings');
   const isMain = !websiteId && !isAdmin && !isSettings;
 
   const links = [
+    ...(!teamId
+      ? [
+          {
+            id: 'fleet',
+            label: t(labels.fleet),
+            path: '/fleet',
+            icon: <Layers />,
+          },
+        ]
+      : []),
     {
       id: 'boards',
       label: t(labels.boards),
