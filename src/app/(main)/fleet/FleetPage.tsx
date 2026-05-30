@@ -15,6 +15,7 @@ import {
 } from '@umami/react-zen';
 import { useMemo, useState } from 'react';
 import { ExternalLink } from '@/components/common/ExternalLink';
+import Link from '@/components/common/Link';
 import { PageBody } from '@/components/common/PageBody';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Panel } from '@/components/common/Panel';
@@ -24,6 +25,7 @@ import {
   useLoginQuery,
   useMessages,
   useMobile,
+  useNavigation,
   useTimezone,
 } from '@/components/hooks';
 import type { FleetData } from '@/components/hooks/queries/useFleetQuery';
@@ -61,6 +63,7 @@ export function FleetPage() {
   const { isMobile } = useMobile();
   const { timezone } = useTimezone();
   const { dateRange } = useDateRange({ timezone });
+  const { renderUrl } = useNavigation();
   const { data, isLoading, error } = useFleetQuery();
 
   const isAdmin = user?.isAdmin || user?.role === ROLES.admin;
@@ -167,9 +170,11 @@ export function FleetPage() {
         <Panel title="Top converting sites">
           <DataTable data={data?.topSites ?? []} displayMode={isMobile ? 'cards' : 'table'}>
             <DataColumn id="name" label={t(labels.name)}>
-              {({ name, domain }: any) => (
+              {({ websiteId, name, domain }: any) => (
                 <Column gap="1">
-                  <Text weight="bold">{name}</Text>
+                  <Link href={renderUrl(`/websites/${websiteId}`)}>
+                    <Text weight="bold">{name}</Text>
+                  </Link>
                   {domain && (
                     <ExternalLink href={`https://${domain}`} prefetch={false}>
                       {domain}
@@ -185,7 +190,15 @@ export function FleetPage() {
               {({ formSubmit }: any) => formatNumber(formSubmit)}
             </DataColumn>
             <DataColumn id="conversions" label={t(labels.conversion)} align="end">
-              {({ conversions }: any) => formatNumber(conversions)}
+              {({ websiteId, conversions }: any) =>
+                conversions > 0 ? (
+                  <Link href={renderUrl(`/websites/${websiteId}/events`)}>
+                    {formatNumber(conversions)}
+                  </Link>
+                ) : (
+                  formatNumber(conversions)
+                )
+              }
             </DataColumn>
             <DataColumn id="rate" label={t(labels.conversionRate)} align="end">
               {({ conversions, visits }: any) => formatRate(conversions, visits)}
