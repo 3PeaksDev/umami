@@ -21,6 +21,7 @@ export * from './queries/useEventDataEventsQuery';
 export * from './queries/useEventDataPropertiesQuery';
 export * from './queries/useEventDataQuery';
 export * from './queries/useEventDataValuesQuery';
+export * from './queries/useFleetQuery';
 export * from './queries/useLinkQuery';
 export * from './queries/useLinkSharesQuery';
 export * from './queries/useLinksQuery';

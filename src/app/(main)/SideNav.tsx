@@ -6,6 +6,7 @@ import { useGlobalState, useMessages, useNavigation } from '@/components/hooks';
 import {
   Globe,
   Grid2x2,
+  Layers,
   LayoutDashboard,
   LinkIcon,
   PanelLeft,
@@ -39,6 +40,12 @@ export function SideNav(props: any) {
             label: t(labels.dashboard),
             path: '/dashboard',
             icon: <PanelsLeftBottom />,
+          },
+          {
+            id: 'fleet',
+            label: t(labels.fleet),
+            path: '/fleet',
+            icon: <Layers />,
           },
         ]
       : []),

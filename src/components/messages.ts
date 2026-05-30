@@ -76,6 +76,7 @@ export const labels: Record<string, string> = {
   profile: 'label.profile',
   profiles: 'label.profiles',
   dashboard: 'label.dashboard',
+  fleet: 'label.fleet',
   open: 'label.open',
   more: 'label.more',
   realtime: 'label.realtime',
