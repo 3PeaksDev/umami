@@ -1,0 +1,22 @@
+{
+  "name": "umami-local-dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "install": "pnpm install && bash .cursor/setup-dev-env.sh",
+  "start": "bash .cursor/start-services.sh",
+  "ports": [
+    {
+      "name": "web",
+      "port": 3000
+    }
+  ],
+  "terminals": [
+    {
+      "name": "umami-dev",
+      "command": "pnpm dev",
+      "description": "Next.js dev server (Turbopack) at http://localhost:3000. Run bash .cursor/verify-dev-env.sh after the server is ready."
+    }
+  ]
+}
