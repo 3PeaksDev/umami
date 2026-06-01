@@ -291,7 +291,15 @@ function ChannelsDrilldown({
                   ) : (
                     <span style={{ width: 16, display: 'inline-block' }} />
                   )}
-                  <Text weight="bold" style={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}>
+                  <Text
+                    weight="bold"
+                    style={{
+                      flex: 1,
+                      minWidth: 0,
+                      overflowWrap: 'anywhere',
+                      whiteSpace: 'normal',
+                    }}
+                  >
                     {channelLabel(channel)}
                   </Text>
                 </Row>
@@ -356,6 +364,7 @@ function ChannelsDrilldown({
                         flex: 1,
                         minWidth: 0,
                         overflowWrap: isMobile ? 'anywhere' : undefined,
+                        whiteSpace: isMobile ? 'normal' : undefined,
                       }}
                     >
                       {referrerDomain}
