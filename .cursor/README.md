@@ -107,7 +107,7 @@ Checks:
 
 1. Open http://localhost:3000/login
 2. Sign in as **admin** / **umami**
-3. Confirm redirect to **Websites** (or dashboard)
+3. Confirm redirect to **Fleet**
 4. Open http://localhost:3000/fleet for aggregated fleet analytics
 
 ### Lint

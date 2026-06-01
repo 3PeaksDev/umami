@@ -14,10 +14,22 @@ fi
 if command -v pg_ctlcluster >/dev/null 2>&1; then
   PG_VERSION="$(ls /etc/postgresql 2>/dev/null | head -1 || true)"
   if [[ -n "${PG_VERSION}" ]]; then
-    pg_ctlcluster "${PG_VERSION}" main start || true
+    if [[ "${EUID:-$(id -u)}" -eq 0 ]]; then
+      pg_ctlcluster "${PG_VERSION}" main start || true
+    elif command -v sudo >/dev/null 2>&1; then
+      sudo pg_ctlcluster "${PG_VERSION}" main start || true
+    else
+      pg_ctlcluster "${PG_VERSION}" main start || true
+    fi
   fi
 elif command -v service >/dev/null 2>&1; then
-  service postgresql start || true
+  if [[ "${EUID:-$(id -u)}" -eq 0 ]]; then
+    service postgresql start || true
+  elif command -v sudo >/dev/null 2>&1; then
+    sudo service postgresql start || true
+  else
+    service postgresql start || true
+  fi
 fi
 
 for _ in $(seq 1 30); do

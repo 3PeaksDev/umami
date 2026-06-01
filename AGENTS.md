@@ -28,7 +28,7 @@ The repo includes [`.cursor/environment.json`](.cursor/environment.json) (Node +
 
 ### Gotchas
 
-- After login, dev redirects to `/websites`, not `/dashboard`.
+- **`pnpm dev` redirects** to `/fleet` after login and from the root route.
 - Fleet page: `/fleet` (admin; empty until seed or real traffic).
 - `pnpm test` does not need Postgres; `pnpm dev` does.
 - `.env` is gitignored — created from `.env.example` by `setup-dev-env.sh`.

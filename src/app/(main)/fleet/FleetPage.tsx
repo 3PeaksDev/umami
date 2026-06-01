@@ -147,6 +147,7 @@ export function FleetPage() {
             channelReferrers={data?.channelReferrers ?? []}
             conversionTotals={channelConversionTotals}
             channelLabel={channelLabel}
+            isMobile={isMobile}
           />
         </Panel>
 
@@ -228,11 +229,13 @@ function ChannelsDrilldown({
   channelReferrers,
   conversionTotals,
   channelLabel,
+  isMobile,
 }: {
   channels: FleetData['channels'];
   channelReferrers: FleetData['channelReferrers'];
   conversionTotals: Map<string, number>;
   channelLabel: (c: string) => string;
+  isMobile: boolean;
 }) {
   const { t, labels } = useMessages();
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -250,17 +253,19 @@ function ChannelsDrilldown({
 
   return (
     <Column>
-      <Row paddingY="2" paddingX="3" gap="3" alignItems="center" border="bottom">
-        <Text color="muted" weight="bold" style={{ flex: 1 }}>
-          {t(labels.channel)}
-        </Text>
-        <Text color="muted" weight="bold" style={{ width: 100, textAlign: 'right' }}>
-          {t(labels.visitors)}
-        </Text>
-        <Text color="muted" weight="bold" style={{ width: 120, textAlign: 'right' }}>
-          {t(labels.conversionRate)}
-        </Text>
-      </Row>
+      {!isMobile && (
+        <Row paddingY="2" paddingX="3" gap="3" alignItems="center" border="bottom">
+          <Text color="muted" weight="bold" style={{ flex: 1 }}>
+            {t(labels.channel)}
+          </Text>
+          <Text color="muted" weight="bold" style={{ width: 100, textAlign: 'right' }}>
+            {t(labels.visitors)}
+          </Text>
+          <Text color="muted" weight="bold" style={{ width: 120, textAlign: 'right' }}>
+            {t(labels.conversionRate)}
+          </Text>
+        </Row>
+      )}
       {channels.map(({ channel, visitors, visits }) => {
         const referrers = referrersByChannel.get(channel) ?? [];
         const canExpand = referrers.length > 0 && channel !== 'direct';
@@ -269,48 +274,105 @@ function ChannelsDrilldown({
 
         return (
           <Column key={channel} border="bottom">
-            <Row
-              paddingY="2"
-              paddingX="3"
-              gap="3"
-              alignItems="center"
-              hover={canExpand ? { backgroundColor: 'surface-sunken' } : undefined}
-              style={{ cursor: canExpand ? 'pointer' : 'default' }}
-              onClick={() => canExpand && setExpanded(isOpen ? null : channel)}
-            >
-              <Row alignItems="center" gap="2" style={{ flex: 1, minWidth: 0 }}>
-                {canExpand ? (
-                  <Icon size="sm" color="muted">
-                    {isOpen ? <ChevronDown /> : <ChevronRight />}
-                  </Icon>
-                ) : (
-                  <span style={{ width: 16, display: 'inline-block' }} />
-                )}
-                <Text truncate>{channelLabel(channel)}</Text>
+            {isMobile ? (
+              <Column
+                paddingY="3"
+                paddingX="3"
+                gap="2"
+                hover={canExpand ? { backgroundColor: 'surface-sunken' } : undefined}
+                style={{ cursor: canExpand ? 'pointer' : 'default' }}
+                onClick={() => canExpand && setExpanded(isOpen ? null : channel)}
+              >
+                <Row alignItems="center" gap="2">
+                  {canExpand ? (
+                    <Icon size="sm" color="muted">
+                      {isOpen ? <ChevronDown /> : <ChevronRight />}
+                    </Icon>
+                  ) : (
+                    <span style={{ width: 16, display: 'inline-block' }} />
+                  )}
+                  <Text
+                    weight="bold"
+                    style={{
+                      flex: 1,
+                      minWidth: 0,
+                      overflowWrap: 'anywhere',
+                      whiteSpace: 'normal',
+                    }}
+                  >
+                    {channelLabel(channel)}
+                  </Text>
+                </Row>
+                <Row
+                  gap="4"
+                  style={{
+                    paddingLeft: 24,
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <Row gap="1" alignItems="center">
+                    <Text color="muted">{t(labels.visitors)}</Text>
+                    <Text>{formatNumber(visitors)}</Text>
+                  </Row>
+                  <Row gap="1" alignItems="center">
+                    <Text color="muted">{t(labels.conversionRate)}</Text>
+                    <Text>{formatRate(conversions, visits)}</Text>
+                  </Row>
+                </Row>
+              </Column>
+            ) : (
+              <Row
+                paddingY="2"
+                paddingX="3"
+                gap="3"
+                alignItems="center"
+                hover={canExpand ? { backgroundColor: 'surface-sunken' } : undefined}
+                style={{ cursor: canExpand ? 'pointer' : 'default' }}
+                onClick={() => canExpand && setExpanded(isOpen ? null : channel)}
+              >
+                <Row alignItems="center" gap="2" style={{ flex: 1, minWidth: 0 }}>
+                  {canExpand ? (
+                    <Icon size="sm" color="muted">
+                      {isOpen ? <ChevronDown /> : <ChevronRight />}
+                    </Icon>
+                  ) : (
+                    <span style={{ width: 16, display: 'inline-block' }} />
+                  )}
+                  <Text truncate>{channelLabel(channel)}</Text>
+                </Row>
+                <Text style={{ width: 100, textAlign: 'right' }}>{formatNumber(visitors)}</Text>
+                <Text style={{ width: 120, textAlign: 'right' }}>
+                  {formatRate(conversions, visits)}
+                </Text>
               </Row>
-              <Text style={{ width: 100, textAlign: 'right' }}>{formatNumber(visitors)}</Text>
-              <Text style={{ width: 120, textAlign: 'right' }}>
-                {formatRate(conversions, visits)}
-              </Text>
-            </Row>
+            )}
             {isOpen && (
               <Column backgroundColor="surface-sunken" paddingY="2">
                 {referrers.slice(0, 15).map(({ referrerDomain, visitors: rv }) => (
                   <Row
                     key={referrerDomain}
-                    paddingY="1"
+                    paddingY={isMobile ? '2' : '1'}
                     paddingX="3"
                     gap="3"
                     alignItems="center"
-                    style={{ paddingLeft: 40 }}
+                    style={{ paddingLeft: isMobile ? 32 : 40 }}
                   >
-                    <Text color="muted" truncate style={{ flex: 1, minWidth: 0 }}>
+                    <Text
+                      color="muted"
+                      truncate={isMobile ? undefined : true}
+                      style={{
+                        flex: 1,
+                        minWidth: 0,
+                        overflowWrap: isMobile ? 'anywhere' : undefined,
+                        whiteSpace: isMobile ? 'normal' : undefined,
+                      }}
+                    >
                       {referrerDomain}
                     </Text>
-                    <Text color="muted" style={{ width: 100, textAlign: 'right' }}>
+                    <Text color="muted" style={{ width: isMobile ? 72 : 100, textAlign: 'right' }}>
                       {formatNumber(rv)}
                     </Text>
-                    <span style={{ width: 120 }} />
+                    {!isMobile && <span style={{ width: 120 }} />}
                   </Row>
                 ))}
               </Column>
