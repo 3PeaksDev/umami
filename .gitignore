@@ -48,5 +48,6 @@ yarn-error.log*
 .env
 .env.*
 *.env.*
+!.env.example
 
 *.dev.yml
