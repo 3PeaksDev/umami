@@ -42,13 +42,13 @@ describe('User tests', () => {
       .should('contain.text', 'View only');
 
     cy.logout();
-    cy.url().should('eq', Cypress.config().baseUrl + '/login');
+    cy.url().should('eq', `${Cypress.config().baseUrl}/login`);
     cy.getDataTest('input-username').find('input').as('inputUsername').click();
     cy.get('@inputUsername').type('Test-user', { delay: 0 });
     cy.get('@inputUsername').click();
     cy.getDataTest('input-password').find('input').type('newPassword', { delay: 0 });
     cy.getDataTest('button-submit').click();
-    cy.url().should('eq', Cypress.config().baseUrl + '/dashboard');
+    cy.url().should('eq', `${Cypress.config().baseUrl}/fleet`);
   });
 
   it('Delete a user', () => {
