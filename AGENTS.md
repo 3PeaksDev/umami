@@ -38,7 +38,7 @@ See `package.json` scripts and [README.md](README.md). Common:
 
 ### Gotchas
 
-- **`pnpm dev` redirects** to `/websites` after login, not `/dashboard` (Cypress still expects `/dashboard` in some tests).
+- **`pnpm dev` redirects** to `/fleet` after login and from the root route.
 - **Postgres in Cloud VMs** is installed via apt in setup; ensure the cluster is running before `pnpm dev` (`pg_isready -h localhost`).
 - **Docker** is optional; root `docker-compose.yml` runs the published Umami image + Postgres, but many Cloud VMs use apt Postgres instead.
 - **`SKIP_DB_CHECK=1`** allows build steps without a live DB (CI pattern); normal dev should not set this.
